@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحجز أونلاين - مركز الدروس الخصوصية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#1E1B4B,#4F46E5);min-height:100vh;padding:20px;color:#1F2937}
+.box{max-width:520px;margin:30px auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.head{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;padding:28px 22px;text-align:center}
+.head h1{font-size:22px;font-weight:900}
+.head p{opacity:.85;font-size:13px;margin-top:6px}
+.frm{padding:22px}
+label{display:block;font-weight:700;font-size:13px;margin:12px 0 6px}
+input,select,textarea{width:100%;padding:12px;border:2px solid #E5E7EB;border-radius:10px;font-family:inherit;font-size:14px;background:#F9FAFB}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#4F46E5;background:#fff}
+button{width:100%;margin-top:18px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}
+.err{background:#FEE2E2;color:#DC2626;border-radius:10px;padding:10px;font-size:13px;font-weight:700;margin-top:12px;display:none}
+.ok{text-align:center;padding:34px 22px;display:none}
+.ok .big{font-size:52px}
+.ref{display:inline-block;margin-top:10px;background:#EEF2FF;color:#4F46E5;font-weight:900;padding:8px 20px;border-radius:10px;letter-spacing:1px}
+.foot{text-align:center;font-size:11px;color:#9CA3AF;padding:0 0 18px}
+</style></head>
+<body>
+<div class="box"><div class="head"><h1>📝 الحجز أونلاين</h1><p>مركز الدروس الخصوصية • 01227234406</p></div>
+<div class="frm" id="frm"><label>👤 اسم الطالب</label><input id="fName" placeholder="الاسم رباعي">
+<label>📱 رقم الهاتف</label><input id="fPhone" inputmode="numeric" placeholder="01xxxxxxxxx">
+<label>📚 المجموعة</label><select id="fGroup"><option value="">اختر المجموعة</option><option value="1">مجموعة اولى ثانوى</option><option value="2">مجموعة الصف الثانى ( بكالوريا )</option></select>
+<label>📝 نوع الحجز</label><select id="fType"><option value="new">طالب جديد</option><option value="existing">طالب موجود</option></select>
+<label>🗒 ملاحظات</label><textarea id="fNotes" rows="2" placeholder="اختياري"></textarea>
+<div class="err" id="fErr"></div>
+<button onclick="sendBooking()">✅ تأكيد الحجز</button></div>
+<div class="ok" id="okBox"><div class="big">✅</div><h2>تم استلام طلبك بنجاح</h2><p>سيتم التواصل معك قريباً</p><div class="ref" id="refCode"></div></div>
+<div class="foot">مستر علاء الحفنى</div></div>
+<script>
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEyv9VFnQje2L_RTWZVpwJ2NQsAyU6IT2b-jfki3xfYbTc-_O-FYs5Bx2VLzibX5BB/exec";
+function sendBooking(){
+  var err = document.getElementById("fErr"); err.style.display = "none";
+  var name = document.getElementById("fName").value.trim();
+  var phone = document.getElementById("fPhone").value.replace(/\D/g, "");
+  var group = document.getElementById("fGroup").value;
+  var type = document.getElementById("fType").value;
+  var notes = document.getElementById("fNotes").value.trim();
+  if (!name) return fail("⚠️ أدخل اسم الطالب");
+  if (phone.length < 10) return fail("⚠️ أدخل رقم هاتف صحيح");
+  if (!group) return fail("⚠️ اختر المجموعة");
+  if (!SCRIPT_URL) return fail("⚠️ خدمة الحجز غير مفعلة حالياً");
+  var ref = "BK" + Date.now().toString().slice(-6);
+  fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ name: name, phone: phone, group: group, type: type, notes: notes, ref: ref }) })
+    .then(function(){ done(ref); }).catch(function(){ done(ref); });
+}
+function fail(m){ var e = document.getElementById("fErr"); e.textContent = m; e.style.display = "block"; }
+function done(ref){ document.getElementById("frm").style.display = "none"; document.getElementById("refCode").textContent = "#" + ref; document.getElementById("okBox").style.display = "block"; }
+</script>
+</body>
+</html>
